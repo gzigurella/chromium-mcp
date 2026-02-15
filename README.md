@@ -18,7 +18,7 @@ I didn't wanna waste my "limited" tokens on Z.ai coding plan, therefore I made m
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/chromium-mcp.git
+git clone https://github.com/gzigurella/chromium-mcp.git
 cd chromium-mcp
 
 # Create virtual environment
@@ -36,7 +36,7 @@ playwright install chromium
 
 ```bash
 # Clone and enter directory
-git clone https://github.com/YOUR_USERNAME/chromium-mcp.git
+git clone https://github.com/gzigurella/chromium-mcp.git
 cd chromium-mcp
 
 # Install with uv
