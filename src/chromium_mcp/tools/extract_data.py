@@ -1,10 +1,12 @@
 """Extract data tool implementation."""
 
 import json
+import sys
 from playwright.async_api import (
     async_playwright,
     TimeoutError as PlaywrightTimeoutError,
 )
+from ..config import Config
 from .fetch_page import validate_url
 
 
@@ -29,6 +31,12 @@ async def extract_data_async(
         ValueError: If url is invalid or uses unsupported protocol
         TimeoutError: If page load times out
     """
+    # Debug logging
+    if Config.is_debug():
+        print(f"[DEBUG] extract_data_async started", file=sys.stderr)
+        print(f"[DEBUG] URL: {url}", file=sys.stderr)
+        print(f"[DEBUG] Selectors: {len(selectors)} items", file=sys.stderr)
+
     # Validate URL first (before launching browser)
     validate_url(url)
 
@@ -37,7 +45,11 @@ async def extract_data_async(
 
     try:
         async with async_playwright() as p:
-            browser = await p.chromium.launch()
+            print(f"[DEBUG] Browser launch with config", file=sys.stderr)
+            browser = await p.chromium.launch(
+                executable_path=Config.get_chromium_path(),
+                headless=Config.is_headless(),
+            )
             try:
                 page = await browser.new_page()
                 page.set_default_timeout(timeout_ms)

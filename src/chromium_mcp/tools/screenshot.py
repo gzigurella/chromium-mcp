@@ -1,10 +1,12 @@
 """Screenshot tool implementation."""
 
 import base64
+import sys
 from playwright.async_api import (
     async_playwright,
     TimeoutError as PlaywrightTimeoutError,
 )
+from ..config import Config
 from .fetch_page import validate_url
 
 
@@ -32,8 +34,12 @@ async def screenshot_async(
 
     Raises:
         ValueError: If url is invalid or uses unsupported protocol
-        TimeoutError: If page load times out
     """
+    # Debug logging
+    if Config.is_debug():
+        print(f"DEBUG: Screenshot URL: {url}", file=sys.stderr)
+        print(f"DEBUG: Format: {format}, Full page: {full_page}", file=sys.stderr)
+
     # Validate URL first (before launching browser)
     validate_url(url)
 
@@ -41,7 +47,16 @@ async def screenshot_async(
 
     try:
         async with async_playwright() as p:
-            browser = await p.chromium.launch()
+            if Config.is_debug():
+                print(
+                    f"DEBUG: Launching browser - Headless: {Config.is_headless()}",
+                    file=sys.stderr,
+                )
+
+            browser = await p.chromium.launch(
+                executable_path=Config.get_chromium_path(),
+                headless=Config.is_headless(),
+            )
             try:
                 page = await browser.new_page()
                 page.set_default_timeout(timeout_ms)

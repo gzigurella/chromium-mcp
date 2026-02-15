@@ -1,9 +1,11 @@
 """MCP server for Chromium-based web fetching."""
 
 import asyncio
+import sys
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
+from .config import Config
 
 
 # Create server instance
@@ -234,6 +236,11 @@ async def list_tools():
 @server.call_tool()
 async def call_tool(name: str, arguments: dict):
     """Handle tool calls."""
+    if Config.is_debug():
+        print(
+            f"DEBUG: Tool called: {name}, args: {list(arguments.keys())}",
+            file=sys.stderr,
+        )
     if name == "fetch_page":
         from .tools.fetch_page import fetch_page_async
 

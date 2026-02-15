@@ -1,11 +1,13 @@
 """Fetch page tool implementation."""
 
 import html2text
+import sys
 from urllib.parse import urlparse
 from playwright.async_api import (
     async_playwright,
     TimeoutError as PlaywrightTimeoutError,
 )
+from ..config import Config
 
 
 def validate_url(url: str) -> None:
@@ -73,11 +75,24 @@ async def fetch_page_async(
     # Validate URL first (before launching browser)
     validate_url(url)
 
+    # Debug logging
+    if Config.is_debug():
+        print(f"DEBUG: Fetching URL: {url}", file=sys.stderr)
+
     timeout_ms = timeout * 1000  # Convert to milliseconds for Playwright
 
     try:
         async with async_playwright() as p:
-            browser = await p.chromium.launch()
+            if Config.is_debug():
+                print(
+                    f"DEBUG: Launching browser - Headless: {Config.is_headless()}",
+                    file=sys.stderr,
+                )
+
+            browser = await p.chromium.launch(
+                executable_path=Config.get_chromium_path(),
+                headless=Config.is_headless(),
+            )
             try:
                 page = await browser.new_page()
                 page.set_default_timeout(timeout_ms)

@@ -5,6 +5,8 @@ from playwright.async_api import (
     TimeoutError as PlaywrightTimeoutError,
 )
 from .fetch_page import validate_url, html_to_markdown
+from ..config import Config
+import sys
 
 
 # Valid action types
@@ -94,9 +96,19 @@ async def interact_async(
 
     timeout_ms = timeout * 1000  # Convert to milliseconds for Playwright
 
+    if Config.is_debug():
+        print(f"DEBUG: Starting interact_async", file=sys.stderr)
+        print(f"DEBUG: URL: {url}", file=sys.stderr)
+        print(f"DEBUG: Number of actions: {len(actions)}", file=sys.stderr)
+
     try:
         async with async_playwright() as p:
-            browser = await p.chromium.launch()
+            browser = await p.chromium.launch(
+                executable_path=Config.get_chromium_path(),
+                headless=Config.is_headless(),
+            )
+            if Config.is_debug():
+                print(f"DEBUG: Browser launched", file=sys.stderr)
             try:
                 page = await browser.new_page()
                 page.set_default_timeout(timeout_ms)
