@@ -1,10 +1,12 @@
 """Get link tool implementation."""
 
 import json
+import sys
 from playwright.async_api import (
     async_playwright,
     TimeoutError as PlaywrightTimeoutError,
 )
+from ..config import Config
 from .fetch_page import validate_url
 
 
@@ -32,6 +34,13 @@ async def get_link_async(
         ValueError: If url is invalid, uses unsupported protocol, or element not found
         TimeoutError: If page load or click times out
     """
+    # Debug logging
+    if Config.is_debug():
+        print(f"DEBUG: URL = {url}", file=sys.stderr)
+        print(f"DEBUG: selector = {selector}", file=sys.stderr)
+        print(f"DEBUG: click = {click}", file=sys.stderr)
+        print(f"DEBUG: launching browser...", file=sys.stderr)
+
     # Validate URL first (before launching browser)
     validate_url(url)
 
@@ -39,7 +48,10 @@ async def get_link_async(
 
     try:
         async with async_playwright() as p:
-            browser = await p.chromium.launch()
+            browser = await p.chromium.launch(
+                executable_path=Config.get_chromium_path(),
+                headless=Config.is_headless(),
+            )
             try:
                 page = await browser.new_page()
                 page.set_default_timeout(timeout_ms)
