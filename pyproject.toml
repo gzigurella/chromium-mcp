@@ -1,0 +1,54 @@
+[project]
+name = "chromium-mcp"
+version = "0.1.0"
+description = "MCP server for web fetching and automation using Chromium headless browser"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Gabriele Zigurella", email = "gzigurella99@gmail.com"}
+]
+keywords = ["mcp", "chromium", "playwright", "web-scraping", "browser-automation", "headless-browser"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP :: Browsers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "mcp>=1.0.0",
+    "playwright>=1.40.0",
+    "html2text>=2020.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+]
+
+[project.scripts]
+chromium-mcp = "chromium_mcp.server:run"
+
+[project.urls]
+Homepage = "https://github.com/gzigurella/chromium-mcp"
+Repository = "https://github.com/gzigurella/chromium-mcp"
+Issues = "https://github.com/gzigurella/chromium-mcp/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/chromium_mcp"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
